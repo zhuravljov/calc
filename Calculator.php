@@ -27,7 +27,7 @@ class Calculator
      * @param float $number1
      * @param float $number2
      * @return float
-     * @throws \Exception
+     * @throws CalculatorException
      */
     protected function calcOperation($operation, $number1, $number2)
     {
@@ -50,7 +50,7 @@ class Calculator
      *
      * @param string $expression
      * @return null
-     * @throws \Exception
+     * @throws CalculatorException
      */
     public function calc($expression)
     {
@@ -84,7 +84,7 @@ class Calculator
      *
      * @param  string $expression
      * @return array
-     * @throws \Exception
+     * @throws CalculatorException
      */
     private function getPoliz($expression)
     {
@@ -150,7 +150,7 @@ class Calculator
      * @param null|int $pos
      * @param null|int $len
      * @return string|float
-     * @throws \Exception
+     * @throws CalculatorException
      */
     private function getToken(&$expression, &$pos, &$len)
     {
