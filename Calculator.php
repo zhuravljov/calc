@@ -39,9 +39,19 @@ class Calculator
             case '*':
                 return $number1 * $number2;
             case '/':
-                return $number1 / $number2;
+                if ($number2 === 0.) {
+                    throw new CalculatorException(
+                        'Division by zero',
+                        CalculatorException::DIV_BY_ZERO
+                    );
+                } else {
+                    return $number1 / $number2;
+                }
             default:
-                throw new CalculatorException(sprintf('Unknown operation: "%s"', $operation));
+                throw new CalculatorException(
+                    sprintf('Unknown operation: "%s"', $operation),
+                    CalculatorException::UNKNOWN_OPERATION
+                );
         }
     }
 
@@ -64,7 +74,10 @@ class Calculator
                     $num1 = array_pop($stack);
                     if ($num1 === null or $num2 === null) {
                         // Нехватает операндов
-                        throw new CalculatorException('Syntax error');
+                        throw new CalculatorException(
+                            'Syntax error',
+                            CalculatorException::SYNTAX_ERROR
+                        );
                     }
                     $stack[] = $this->calcOperation($token, $num1, $num2);
                 }
@@ -72,7 +85,10 @@ class Calculator
             if (count($stack) == 1) {
                 return $stack[0];
             } else {
-                throw new CalculatorException('Syntax error');
+                throw new CalculatorException(
+                    'Syntax error',
+                    CalculatorException::SYNTAX_ERROR
+                );
             }
         } else {
             return null;
@@ -100,7 +116,10 @@ class Calculator
                 do {
                     $top = array_pop($stack);
                     if ($top === null) {
-                        throw new CalculatorException('Missing opening quote');
+                        throw new CalculatorException(
+                            'Missing opening quote',
+                            CalculatorException::SYNTAX_ERROR
+                        );
                     }
                     $next = $top !== '(';
                     if ($next) $result[] = $top;
@@ -114,11 +133,19 @@ class Calculator
                 }
                 $stack[] = $token;
             } else {
-                throw new CalculatorException(sprintf('Unknown operation', $token));
+                throw new CalculatorException(
+                    sprintf('Unknown operation', $token),
+                    CalculatorException::UNKNOWN_OPERATION
+                );
             }
         }
         while (($top = array_pop($stack)) !== null) {
-            if ($top == '(') throw new CalculatorException('Missing closing quote');
+            if ($top == '(') {
+                throw new CalculatorException(
+                    'Missing closing quote',
+                    CalculatorException::SYNTAX_ERROR
+                );
+            }
             $result[] = $top;
         }
 
@@ -181,12 +208,18 @@ class Calculator
                 if ($scale <= 1) {
                     return (float)$number;
                 } else {
-                    throw new CalculatorException(sprintf('Number error: %s', $number));
+                    throw new CalculatorException(
+                        sprintf('Number error: %s', $number),
+                        CalculatorException::SYNTAX_ERROR
+                    );
                 }
             } elseif ($char == ' ') {
                 $pos++;
             } else {
-                throw new CalculatorException(sprintf('Unknown char: %s', $char));
+                throw new CalculatorException(
+                    sprintf('Unknown oepration: "%s"', $char),
+                    CalculatorException::UNKNOWN_OPERATION
+                );
             }
         }
         $pos = null;
@@ -197,4 +230,7 @@ class Calculator
 
 class CalculatorException extends \Exception
 {
+    const SYNTAX_ERROR = 1;
+    const UNKNOWN_OPERATION = 2;
+    const DIV_BY_ZERO = 3;
 }
